@@ -1,12 +1,35 @@
 #!/bin/bash
 # This script explains how does the central dogma (dna) work using bash.
 # Created by Daniil Gentili (http://daniil.it)
-# Licensed under GPLv3.
+
+# Copyright (C) 2016 Daniil Gentili
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Changelog:
+# v0.1 (and revisions): added dna engine (I am god) and started to work on RNA transcription.
+
 clear
 echo "BNA v0.1
-This script explains how does the central dogma (dna) work using bash.
+
 Created by Daniil Gentili (http://daniil.it)
-Licensed under GPLv3.
+This script explains how does the central dogma (dna) work using bash.
+
+Copyright (C) 2016 Daniil Gentili
+This program comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome to redistribute it under certain conditions; see https://github.com/danog/bna/raw/master/LICENSE.
+
 I created this script using http://employees.csbsju.edu/hjakubowski/classes/chem%20and%20society/cent_dogma/olcentdogma.html, https://www.youtube.com/watch?v=J3HVVi2k2No and http://misc.flogisoft.com/bash/tip_colors_and_formatting, feel free to check these sites out.
 "
 sleep 1
@@ -19,6 +42,7 @@ waitprint() {
 "
  read
 }
+
 # This function appends a dna couple to the dna variable and optionally prints out some ascii art.
 mkdna() {
  # $1 is the index of the chromosome array and $2 enables ascii art
@@ -120,7 +144,7 @@ done
 n=0 # Reset the counter
 until [ $n = 10 ]; do # This loop makes nine more combinations after the TATAAA magic string
  n=$(($n+1)) # Increase counter
- until echo "${dna[*]}" | grep -q "TATAAA"; do # This loop creates random combinations until we get a TATAAA magic string in at least one of the strands
+ until echo "${dna[*]}" | grep -q "T-A-T-A-A-A"; do # This loop creates random combinations until we get a TATAAA magic string in at least one of the strands
   random=$(shuf -i 0-3 -n 1) # Generate random chromosome
   mkdna $random
  done
@@ -152,9 +176,11 @@ for strand in ${dna[*]}; do # Search for the TATAAA string in both strands.
    last5=${last5:1}$chromo 
   else 
    rna+=$chromo
+  fi
  done
- if [ "$rna" != "" ] && continue
+ [ "$rna" != "" ] && continue
 done
+
 echo "rna is $rna"
 ) 2>&1 | sed 's/.*set +x.*/\
 /g;s/^\+ //g'
