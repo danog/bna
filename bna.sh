@@ -36,12 +36,12 @@ mkdna() {
    opposite="G"
    ;;
   "*")
-   continue
+   return
    ;;
  esac
  # Store dna in array
- dna[0]+="${chromosome[$1]}"
- dna[1]+="$opposite" 
+ dna[0]+="${chromosome[$1]}"-
+ dna[1]+="$opposite"-
  [ "$2" = "y" ] && {
   # Print random chromosome, its complementary, phosphorus (P), rybose (R), and some ascii art.
   echo -e " R-\e[44m${chromosome[$1]}\e[49m"---"\e[44m$opposite\e[49m-R"
@@ -99,8 +99,8 @@ mkdna() {
    ;;
  esac
  # Store dna in array
- dna[0]+="${chromosome[$1]}"
- dna[1]+="$opposite"
+ dna[0]+="${chromosome[$1]}"-
+ dna[1]+="$opposite"-
 }
 '
 waitprint bash 'This function is then called in a loop that also creates the TATAAA magic string (see part 2):
@@ -108,7 +108,7 @@ waitprint bash 'This function is then called in a loop that also creates the TAT
 n=0 # Reset the counter
 until [ $n = 10 ]; do # This loop makes ten more combinations after the TATAAA magic string
  n=$(($n+1)) # Increase counter
- until echo "${dna[*]}" | grep -q "TATAAA"; do # This loop creates random combinations until we get a TATAAA magic string in at least one of the strands
+ until echo "${dna[*]}" | grep -q "T-A-T-A-A-A"; do # This loop creates random combinations until we get a TATAAA magic string in at least one of the strands
   random=$(shuf -i 0-3 -n 1) # Generate random chromosome
   mkdna $random
  done
@@ -139,7 +139,23 @@ waitprint bio "Transcription begins when an enzyme called RNA polymerase attache
 
 waitprint bio "The first step in transcription is initiation. During this step, RNA polymerase and its associated transcription factors bind to the DNA strand at a specific area that facilitates transcription. This area, known as a promoter region, often includes a specialized nucleotide sequence, TATAAA, which is also called the TATA box"
 
-waitprint bash ""
+waitprint bash "Here we must find where do we have to start copying the dna to the rna. As mentioned earlier, we can use the magic TATAAA string.
+This is how we do it:
+"'for d in ${dna[*]}; do
+'
+
+for strand in ${dna[*]}; do # Search for the TATAAA string in both strands.
+ last5="tynix"
+ copythis=
+ for chromo in $(echo $strand | sed 's/-/ /g');do # Loop trough every chromo until I find the combination
+  if [ "$last5" != "TATAAA" ]; then # If the last 5 chromosomes aren't the magic sequence, continue searching
+   last5=${last5:1}$chromo 
+  else 
+   rna+=$chromo
+ done
+ if [ "$rna" != "" ] && continue
+done
+echo "rna is $rna"
 ) 2>&1 | sed 's/.*set +x.*/\
 /g;s/^\+ //g'
 
