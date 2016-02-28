@@ -3,7 +3,7 @@
 Created by Daniil Gentili (http://daniil.it)  
 This script explains how does the central dogma (dna) work using bash.  
 
-[View on Github](https://github.com/danog/bma/)  
+[View on Github](https://github.com/danog/bna/)  
 
 This project is licensed under the terms of the GPLv3 license.  
 
