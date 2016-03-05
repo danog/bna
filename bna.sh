@@ -18,10 +18,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # Changelog:
-# v0.1 (and revisions): added dna engine (I am god) and started to work on RNA transcription.
+# v0.1 (and revisions): added dna engine and started to work on RNA transcription.
+# v0.2 (and revisions): added rna transcription process and finished complementary engine.
 
 clear
-echo "BNA v0.1
+echo "BNA v0.2
 
 Created by Daniil Gentili (http://daniil.it)
 This script explains how does the central dogma (dna) work using bash.
@@ -71,8 +72,8 @@ mkdna() {
  # Store dna in array
  dna[0]+="${chromosome[$1]}"-
  dna[1]+="$opposite"-
- # Print random chromosome, its complementary, phosphorus (P), rybose (R), and some ascii art.
- echo -e " R-\e[44m${chromosome[$1]}\e[49m"---"\e[44m$opposite\e[49m-R"
+ # Print random chromosome, its complementary, phosphorus (P), deoxyrybose (D), and some ascii art.
+ echo -e " D-\e[44m${chromosome[$1]}\e[49m"---"\e[44m$opposite\e[49m-D"
  [ $n != 10 ] && echo \
 '/         \
 P          P
