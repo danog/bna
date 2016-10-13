@@ -65,13 +65,14 @@ opposite() {
  esac
 }
 
-# This function appends a dna couple to the dna variable and optionally prints out some ascii art.
+# This function appends a dna couple to the dna variable and prints out some ascii art.
 mkdna() {
- # $1 is the index of the chromosome array and $2 enables ascii art
+ # $1 is the index of the chromosome array
  opposite=$(opposite ${chromosome[$1]}) # Generate opposite chromosome
  # Store dna in array
  dna[0]+="${chromosome[$1]}"-
  dna[1]+="$opposite"-
+
  # Print random chromosome, its complementary, phosphorus (P), deoxyrybose (D), and some ascii art.
  echo -e " D-\e[44m${chromosome[$1]}\e[49m"---"\e[44m$opposite\e[49m-D"
  [ $n != 10 ] && echo \
@@ -84,6 +85,8 @@ P          P
 (
 waitprint "Introduction.
 The 'Central Dogma' of molecular biology is that 'DNA makes RNA makes protein'. This script shows how molecular commands transcribe the genes in the DNA of every cell into portable RNA messages, how those messenger RNA are modified and exported from the nucleus, and finally how the RNA code is read to build proteins.
+
+Press enter to continue.
 "
 
 
@@ -92,7 +95,7 @@ waitprint "Part 1: the DNA.
 
 
 waitprint bio "Everything starts with a organic molecule called Deoxyribonucleic acid (DNA).
-This molecule has an intresting structure that can be trimmed down to a simple variable containing the four bases (called chromosomes) of the DNA: A, T, C and G.
+This molecule has an intresting structure that can be trimmed down to a simple structure containing the four bases (called chromosomes) of the DNA: A, T, C and G.
 "
 
 waitprint bash "Let's declare an array and assign values to it."
@@ -136,7 +139,7 @@ set +x
 
 waitprint bash 'This function generates the DNA.
 mkdna() {
- # $1 is the index of the chromosome array and $2 enables ascii art
+ # $1 is the index of the chromosome array
  opposite=$(opposite ${chromosome[$1]}) # Generate opposite chromosome
  # Store dna in array
  dna[0]+="${chromosome[$1]}"-
@@ -144,16 +147,16 @@ mkdna() {
 }
 
 '
-waitprint bash 'This function is then called in a loop that also creates the TATAAA magic string (see part 2):
+waitprint bash 'This function is then called in a loop that also creates random chromosome combinations until the TATAAA magic string is encountered, and then generates 10 more random chromosomes (see part 2):
 
 n=0 # Reset the counter
 until [ $n = 10 ]; do # This loop makes ten more combinations after the TATAAA magic string
  n=$(($n+1)) # Increase counter
  until echo "${dna[*]}" | grep -q "T-A-T-A-A-A"; do # This loop creates random combinations until we get a TATAAA magic string in at least one of the strands
-  random=$(shuf -i 0-3 -n 1) # Generate random chromosome
+  random=$(shuf -i 0-3 -n 1) # Generate random chromosome (to generate the TATAAA sequence)
   mkdna $random
  done
- random=$(shuf -i 0-3 -n 1) # Generate random chromosome
+ random=$(shuf -i 0-3 -n 1) # Generate random chromosome (to generate ten more chromosomes)
  mkdna $random
 done
 '
@@ -162,10 +165,10 @@ n=0 # Reset the counter
 until [ $n = 10 ]; do # This loop makes nine more combinations after the TATAAA magic string
  n=$(($n+1)) # Increase counter
  until echo "${dna[*]}" | grep -q "T-A-T-A-A-A"; do # This loop creates random combinations until we get a TATAAA magic string in at least one of the strands
-  random=$(shuf -i 0-3 -n 1) # Generate random chromosome
+  random=$(shuf -i 0-3 -n 1) # Generate random chromosome (to generate the TATAAA sequence)
   mkdna $random
  done
- random=$(shuf -i 0-3 -n 1) # Generate random chromosome
+ random=$(shuf -i 0-3 -n 1) # Generate random chromosome (to generate ten more chromosomes)
  mkdna $random
 done
 
@@ -181,15 +184,15 @@ waitprint bio "Transcription begins when an enzyme called RNA polymerase attache
 waitprint "The first step in transcription is initiation. During this step, RNA polymerase and its associated transcription factors bind to the DNA strand at a specific area that facilitates transcription. This area, known as a promoter region, often includes a specialized nucleotide sequence, TATAAA, which is also called the TATA box.
 Once RNA polymerase and its related transcription factors are in place, the single-stranded DNA is exposed and ready for transcription. At this point, RNA polymerase begins moving down the DNA template strand in the 3' to 5' direction, and as it does so, it strings together complementary nucleotides. By virtue of complementary base- pairing, this action creates a new strand of mRNA that is organized in the 5' to 3' direction. As the RNA polymerase continues down the strand of DNA, more nucleotides are added to the mRNA, thereby forming a progressively longer chain of nucleotides. This process is called elongation."
 
-waitprint bash "Here we must find where do we have to start copying the DNA to the mRNA, and then start copying it to the mRNA. As mentioned earlier, we can use the magic TATAAA string.
+waitprint bash "Here we must find where do we have to start copying the DNA (starting from the TATAAA conbination) to the mRNA, and then start copying it to the mRNA. As mentioned earlier, we can use the magic TATAAA string.
 This is how we do it:"'
 
 for strand in ${dna[*]}; do # Search for the TATAAA string in both strands.
- last6="ponies"
- for chromo in $(echo $strand | sed '"'"'s/-/ /'"'"');do # Loop trough every chromo until I find the combination
+ last6="ponies" # Placeholder value
+ for chromo in $(echo $strand | sed "s/-/ /");do # Loop trough every chromo until I find the combination
   if [ "$last6" != "TATAAA" ]; then # If the last 6 chromosomes aren'"'"'t the magic sequence, continue searching
    last6=${last6:1}$chromo # Remove first char of variable and append current chromo
-  else 
+  else # The TATAAA sequence was found
    mRNA+=$(opposite $chromo rna) # Append the opposite chromosome to the mRNA. Note that in this complementary string there will be no T, since the mRNA uses U (Uracil) instead of T (Thymine).
   fi
  done
@@ -199,30 +202,32 @@ echo $mRNA
 '
 
 for strand in ${dna[*]}; do # Search for the TATAAA string in both strands.
- last6="ponies"
- for chromo in $(echo $strand | sed 's/-/ /g');do # Loop trough every chromo until I find the combination
+ last6="ponies" # Placeholder value
+ for chromo in $(echo $strand | sed "s/-/ /g");do # Loop trough every chromo until I find the combination
   if [ "$last6" != "TATAAA" ]; then # If the last 6 chromosomes aren't the magic sequence, continue searching
    last6=${last6:1}$chromo # Remove first char of variable and append current chromo
-  else 
+  else # The TATAAA sequence was found
    mRNA+=$(opposite $chromo rna)  # Append the opposite chromosome to the mRNA. Note that in this complementary string there will be no T, since the mRNA uses U (Uracil) instead of T (Thymine).
   fi
  done
  [ "$mRNA" != "" ] && break
 done
-echo $mRNA
+
+echo "The sequence that was copied to the mRNA is: $mRNA"
 
 waitprint "Part 3: Termination and editing"
 waitprint bio "As previously mentioned, mRNA cannot perform its assigned function within a cell until elongation ends and the new mRNA separates from the DNA template. This process is referred to as termination. In eukaryotes, the process of termination can occur in several different ways, depending on the exact type of polymerase used during transcription. In some cases, termination occurs as soon as the polymerase reaches a specific series of nucleotides along the DNA template, known as the termination sequence. In other cases, the presence of a special protein known as a termination factor is also required for termination to occur."
 waitprint bash "In bash, the termination sequence is the actual end of string that ends the second loop."
-waitprint bio "Once termination is complete, the mRNA molecule falls off the DNA template. At this point, at least in eukaryotes, the newly synthesized mRNA undergoes a process in which noncoding nucleotide sequences, called introns, are clipped out of the mRNA strand. This process \"tidies up\" the molecule and removes nucleotides that are not involved in protein production (Figure 6). Then, a sequence of 200 adenine nucleotides called a poly-A tail is added to the 3' end of the mRNA molecule (Figure 7). This sequence signals to the cell that the mRNA molecule is ready to leave the nucleus and enter the cytoplasm.
+waitprint bio "Once termination is complete, the mRNA molecule falls off the DNA template. At this point, at least in eukaryotes, the newly synthesized mRNA undergoes a process in which noncoding nucleotide sequences, called introns, are clipped out of the mRNA strand. This process \"tidies up\" the molecule and removes nucleotides that are not involved in protein production. Then, a sequence of 200 adenine nucleotides called a poly-A tail is added to the 3' end of the mRNA molecule. This sequence signals to the cell that the mRNA molecule is ready to leave the nucleus and enter the cytoplasm.
 "
-waitprint bash "In bash, this can be done by editing the string and appending 200 A's to the end of the mRNA variable."'
-mRNA=${mRNA/UA//} # delete UA from the mRNA (this is just an example).
+waitprint bash "In bash, this can be done by removing introns (in this example UA) from the string and appending 200 A's to the end of the mRNA variable."'
+
+mRNA=${mRNA/UA/} # delete UA from the mRNA (this is just an example).
 n=0; until [ $n = 300 ]; do mRNA=$mRNA"A"; n=$(($n + 1));done # This loop appends 200 A'"'"'s to the mRNA
 echo $mRNA
 
 '
-mRNA=${mRNA/UA//} # delete useless UA from the mRNA (this is just an example).
+mRNA=${mRNA/UA/} # delete useless UA from the mRNA (this is just an example).
 n=0; until [ $n = 300 ]; do mRNA=$mRNA"A"; n=$(($n + 1));done # This loop appends 200 A's to the mRNA
 echo $mRNA
 
@@ -234,3 +239,4 @@ The ribosome uses around 50 different types of tRNA (transfer RNAs) to build the
 /g;s/^\+ //g'
 
 
+exit
